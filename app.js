@@ -16,7 +16,6 @@ require("dotenv").config();
 
 //Implement Routes product
 const router = require(`./Routes/employeeroutes`);
-app.use(router);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
