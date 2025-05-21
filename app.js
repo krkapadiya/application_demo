@@ -21,7 +21,7 @@ app.use(router);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/employee", router);
+app.use("/", router);
 
 app.use((req, res) => {
   res.status(400).json("invalid route");
