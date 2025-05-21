@@ -64,7 +64,7 @@ const employeecontroller = {
       });
 
       await employeedata.save();
-      res.redirect("/showemp");
+      res.redirect("/");
     } catch (error) {
       console.error("Internal Server Error:", error);
       res.status(500).send("Internal Server Error");
@@ -87,7 +87,7 @@ const employeecontroller = {
         return successRes(res, 200, "employee deleted successfully");
       }
 
-      res.redirect("/showemp"); // Redirect back to the employee list
+      res.redirect("/"); // Redirect back to the employee list
     } catch {
       return errorRes(res, 500);
     }
@@ -159,7 +159,7 @@ const employeecontroller = {
         { new: true },
       );
       // Redirect to show employee page
-      res.redirect("/showemp");
+      res.redirect("/");
     } catch (error) {
       console.error("Update error:", error.message);
       return errorRes(res, 500, error.message);
