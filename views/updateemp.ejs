@@ -138,7 +138,7 @@ button[type="submit"]:hover {
     </style>
     <h1>Update Employee Details</h1>
     <!-- Form for updating employee details -->
-    <form action="/employee/update/<%= employee._id %>" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()" >
+    <form action="/update/<%= employee._id %>" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()" >
 
         <input type="hidden" id="id" name="id"> 
         <label for="employee_id">Employee ID:</label>
