@@ -14,7 +14,7 @@ router.post(
   employeecontroller.create,
 );
 
-router.get("/showemp", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const employees = await employee.find(); // Fetch all employees from DB
     res.render("showemp", { employees }); // Render showemp.ejs with employees data
