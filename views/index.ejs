@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device -width, initial-scale=1.0">
+    <title>Employee Form</title>
+    <style>
+        /* Your existing styles */
+    </style>
+</head>
+<style>
+    /* General Styles */
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f7f7f7;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1 {
+        text-align: center;
+        padding-top: 50px;
+        color: #4CAF50;
+    }
+
+    /* Navbar Styles */
+    .navbar {
+        background-color: #4CAF50;
+        padding: 10px;
+        text-align: center;
+    }
+
+    .navbar a {
+        color: white;
+        padding: 14px 20px;
+        text-decoration: none;
+        font-size: 18px;
+        margin: 0 10px;
+    }
+
+    .navbar a:hover {
+        background-color: #45a049;
+    }
+
+    /* Form Container */
+    .form-container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 30px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        box-sizing: border-box;
+    }
+
+    /* Heading Style */
+    .form-container h2 {
+        text-align: center;
+        color: #333;
+        font-size: 26px;
+        margin-bottom: 20px;
+    }
+
+    /* Input & Label Styles */
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 16px;
+        color: #555;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    input[type="file"],
+    input[type="radio"] {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 20px;
+        border-radius: 6px;
+        border: 1px solid #ddd;
+        background-color: #f9f9f9;
+        font-size: 16px;
+        transition: border-color 0.3s ease;
+    }
+
+    input[type="radio"] {
+        width: auto;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    input[type="date"]:focus,
+    input[type="file"]:focus {
+        border-color: #4CAF50;
+        outline: none;
+    }
+
+    /* Error Message */
+    .error {
+        color: red;
+        font-size: 12px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    /* Submit Button */
+    button[type="submit"] {
+        width: 100%;
+        padding: 12px;
+        background-color: #4CAF50;
+        color: white;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    button[type="submit"]:hover {
+        background-color: #45a049;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .form-container {
+            padding: 20px;
+        }
+
+        h2 {
+            font-size: 22px;
+        }
+
+        button[type="submit"] {
+            font-size: 14px;
+            padding: 10px;
+        }
+    }
+</style>
+
+<body>
+    <h1></h1>
+    <div class="form-container">
+        <h2>Employee Information</h2>
+        <form id="employeeForm" action="http://localhost:2500/submit-form" method="POST"
+            enctype="multipart/form-data" onsubmit="return validateForm() && checkduplicate()">
+            <!-- Form Fields -->
+            <label for="employee_id">Employee ID:</label>
+            <input type="text" id="employee_id" name="employee_id" required pattern="^\d{3}$"
+                title="Employee ID must be 3 digits" placeholder="Enter employee ID">
+            <div id="employee_id_error" class="error" style="color: red;"></div>
+
+            <% if (typeof errorMessage !=='undefined' ) { %>
+                <!-- Display error message if passed from backend -->
+                <div class="error" style="color: red;">
+                    <%= errorMessage %>
+                </div>
+                <% } %>
+
+
+                    <label for="employee_name">Employee Name:</label>
+                    <input type="text" id="employee_name" name="employee_name" required oninput="validateEmployeeName()"
+                        placeholder="enter employee name">
+                    <div id="employee_name_error" class="error"></div>
+
+                    <label for="salary">Salary:</label>
+                    <input type="number" id="salary" name="salary" required oninput="validateSalary()"
+                        placeholder="enter employee salary">
+                    <div id="salary_error" class="error"></div>
+
+                    <label for="gender">Gender:</label>
+                    <input type="radio" id="male" name="gender" value="Male" required onchange="validateGender()"> Male
+                    <input type="radio" id="female" name="gender" value="Female" required onchange="validateGender()">
+                    Female
+                    <div id="gender_error" class="error"></div>
+
+                    <label for="birth_date">Birth Date:</label>
+                    <input type="date" id="birth_date" name="birth_date" required oninput="validateBirthDate()">
+                    <div id="birth_date_error" class="error"></div>
+
+                    <label for="languages">Languages:</label>
+                    <input type="checkbox" name="languages" value="Hindi" onchange="validateLanguages()"> Hindi
+                    <input type="checkbox" name="languages" value="English" onchange="validateLanguages()"> English
+                    <input type="checkbox" name="languages" value="Gujarati" onchange="validateLanguages()"> Gujarati
+                    <div id="languages_error" class="error"></div>
+
+                    <label for="profile">Upload Photo:</label>
+                    <input type="file" id="profile" name="profile" onchange="validateProfileImage()">
+                    <div id="profile_error" class="error"></div>
+
+                    <button type="submit" id="submitBtn">Add Employee</button>
+        </form>
+    </div>
+
+    <script>
+        function clearErrorMessages() {
+            const errors = document.querySelectorAll('.error');
+            errors.forEach(error => {
+                error.textContent = '';
+            });
+        }
+
+        function validateForm() {
+            clearErrorMessages();
+            let isValid = true;
+
+            // Run each validation function and check if there's any error
+            if (!validateEmployeeId()) isValid = false;
+            if (!validateEmployeeName()) isValid = false;
+            if (!validateSalary()) isValid = false;
+            if (!validateGender()) isValid = false;
+            if (!validateBirthDate()) isValid = false;
+            if (!validateLanguages()) isValid = false;
+            // if (!validateProfileImage()) isValid = false;
+
+            return isValid; // If any validation fails, form will not submit
+        }
+
+        // Modify each validate function to return boolean values
+
+        function validateEmployeeId() {
+            const employeeId = document.getElementById("employee_id");
+            const error = document.getElementById("employee_id_error");
+            if (employeeId.value <= 0) {
+                error.textContent = "Employee ID must be a positive number.";
+                return false;
+            }
+            return true;
+        }
+
+        function validateEmployeeName() {
+            const employeeName = document.getElementById("employee_name");
+            const error = document.getElementById("employee_name_error");
+            const regex = /^[a-zA-Z\s]+$/;
+            if (!regex.test(employeeName.value)) {
+                error.textContent = "Employee Name must only contain letters and spaces.";
+                return false;
+            }
+            return true;
+        }
+
+        function validateSalary() {
+            const salary = document.getElementById("salary");
+            const error = document.getElementById("salary_error");
+            if (salary.value <= 0 && salary.value >= 10000) {
+                error.textContent = "Salary must be a positive number and less than 10000";
+                return false;
+            }
+            return true;
+        }
+
+        function validateGender() {
+            const male = document.getElementById("male");
+            const female = document.getElementById("female");
+            const error = document.getElementById("gender_error");
+            if (!male.checked && !female.checked) {
+                error.textContent = "Please select a gender.";
+                return false;
+            }
+            return true;
+        }
+
+        function validateBirthDate() {
+            const birthDate = document.getElementById("birth_date");
+            const error = document.getElementById("birth_date_error");
+            const today = new Date();
+            const birthDateValue = new Date(birthDate.value);
+            if (birthDateValue >= today) {
+                error.textContent = "Birth date cannot be today or in the future.";
+                return false;
+            }
+            return true;
+        }
+
+        function validateLanguages() {
+            const languages = document.querySelectorAll("input[name='languages']:checked");
+            const error = document.getElementById("languages_error");
+            if (languages.length === 0) {
+                error.textContent = "Please select at least one language.";
+                return false;
+            }
+            return true;
+        }
+
+        // function validateProfileImage() {
+        //     const profile = document.getElementById("profile");
+        //     const error = document.getElementById("profile_error");
+        //     if (!profile.files.length) {
+        //         error.textContent = "Please upload a profile image.";
+        //         return false;
+        //     }
+        //     return true;
+        // }
+    </script>
+
+</body>
+
+</html>

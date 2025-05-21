@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Employee</title>
+</head>
+<body>
+    <style>
+        /* General body styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
+}
+h1{
+    text-align: center;
+}
+
+/* Container for the form */
+form {
+    width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+/* Styling for labels */
+label {
+    font-size: 16px;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 8px;
+}
+
+/* Styling for inputs */
+input[type="text"], input[type="number"], input[type="date"] {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+/* Focus styling for inputs */
+input[type="text"]:focus, input[type="number"]:focus, input[type="date"]:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+.language-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px; /* Space between checkboxes */
+        margin-top: 5px;
+    }
+
+    .language-container label {
+        display: flex;
+        align-items: center;
+        gap: 5px; /* Space between checkbox and label text */
+        background: #f5f5f5; /* Light grey background */
+        padding: 8px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .language-container label:hover {
+        background: #e0e0e0; /* Slightly darker grey on hover */
+    }
+
+    .language-container input[type="checkbox"] {
+        accent-color: #007bff; /* Change checkbox color */
+        transform: scale(1.2); /* Slightly larger checkboxes */
+    }
+
+    .gender-container {
+        display: flex;
+        gap: 15px; /* Space between radio options */
+        margin-top: 5px;
+    }
+
+    .gender-container label {
+        display: flex;
+        align-items: center;
+        gap: 8px; /* Space between radio button and label text */
+        background: #f5f5f5; /* Light grey background */
+        padding: 10px 15px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .gender-container label:hover {
+        background: #e0e0e0; /* Slightly darker grey on hover */
+        transform: scale(1.05); /* Slightly enlarge on hover */
+    }
+
+    .gender-container input[type="radio"] {
+        accent-color: #007bff; /* Change radio button color */
+        transform: scale(1.3); /* Slightly larger radio buttons */
+    }
+
+/* Styling for the submit button */
+button[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+/* Hover effect for the submit button */
+button[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 600px) {
+    form {
+        width: 90%;
+        padding: 15px;
+    }
+    
+    button[type="submit"] {
+        padding: 10px;
+    }
+}
+
+    </style>
+    <h1>Update Employee Details</h1>
+    <!-- Form for updating employee details -->
+    <form action="/employee/update/<%= employee._id %>" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()" >
+
+        <input type="hidden" id="id" name="id"> 
+        <label for="employee_id">Employee ID:</label>
+        <input type="text" id="employee_id" name="employee_id" required pattern="^\d{3}$" title="employee id must be 3 letters" placeholder="enter employee id" value="<%= employee.employee_id %>">
+
+        <label for="employee_name">Employee Name:</label>
+        <input type="text" name="employee_name" value="<%= employee.employee_name %>" required>
+        <br>
+
+        <label for="salary">Salary:</label>
+        <input type="number" name="salary" value="<%= employee.salary %>" required>
+        <br>
+
+        <label>Gender:</label><br>
+
+        <div class="gender-container">
+            <label>
+                <input type="radio" name="gender" value="male" <%= String(employee.gender) === 'male' ? "checked" : '' %>> Male
+            </label>
+            
+            <label>
+                <input type="radio" name="gender" value="female" <%= String(employee.gender) === 'female' ? "checked" : '' %>> Female
+            </label>
+        </div>
+        
+        <br>
+
+        <label for="birth_date">Birth Date:</label>
+        <input type="date" name="birth_date" value="<%= new Date(employee.birth_date).toISOString().split('T')[0] %>" required>
+        <br>
+        
+        <label>Languages:</label><br>
+
+<div class="language-container">
+    <% 
+        const availableLanguages = ["Hindi", "English", "Gujarati"];
+        const selectedLanguages = new Set(employee.languages || []);
+    %>
+
+    <% availableLanguages.forEach(language => { %>
+        <label>
+            <input type="checkbox" name="languages" value="<%= language %>"
+                <%= selectedLanguages.has(language) ? 'checked' : '' %> >
+            <%= language %>
+        </label>
+    <% }) %>
+</div>
+        
+
+
+        <label for="profile">Profile Image</label>
+        <% if (employee.profile) { %>
+            <img src="http://localhost:2500/<%= employee.profile %>" alt="Profile Image" width="100"><br>
+            <label>Change Profile Image:</label>
+        <% } %>
+        <input type="file" name="profile" accept="image/*">
+
+        <button type="submit">Update Employee</button>
+    </form>
+
+    <script>
+        function clearErrorMessages() {
+            const errors = document.querySelectorAll('.error');
+            errors.forEach(error => {
+                error.textContent = '';
+            });
+        }
+
+        function validateForm() {
+            clearErrorMessages();
+            let isValid = true;
+
+            // Run each validation function and check if there's any error
+            if (!validateEmployeeId()) isValid = false;
+            if (!validateEmployeeName()) isValid = false;
+            if (!validateSalary()) isValid = false;
+            if (!validateGender()) isValid = false;
+            if (!validateBirthDate()) isValid = false;
+            if (!validateLanguages()) isValid = false;
+            if (!validateProfileImage()) isValid = false;
+
+            return isValid; // If any validation fails, form will not submit
+        }
+
+        // Modify each validate function to return boolean values
+
+        function validateEmployeeId() {
+            const employeeId = document.getElementById("employee_id");
+            const error = document.getElementById("employee_id_error");
+            if (employeeId.value <= 0) {
+                error.textContent = "Employee ID must be a positive number.";
+                return false;
+            }
+            return true;
+        }
+
+        function validateEmployeeName() {
+            const employeeName = document.getElementById("employee_name");
+            const error = document.getElementById("employee_name_error");
+            const regex = /^[a-zA-Z\s]+$/;
+            if (!regex.test(employeeName.value)) {
+                error.textContent = "Employee Name must only contain letters and spaces.";
+                return false;
+            }
+            return true;
+        }
+
+        function validateSalary() {
+            const salary = document.getElementById("salary");
+            const error = document.getElementById("salary_error");
+            if (salary.value <= 0 && salary.value >=10000) {
+                error.textContent = "Salary must be a positive number and less than 10000";
+                return false;
+            }
+            return true;
+        }
+
+        function validateGender() {
+            const male = document.getElementById("male");
+            const female = document.getElementById("female");
+            const error = document.getElementById("gender_error");
+            if (!male.checked && !female.checked) {
+                error.textContent = "Please select a gender.";
+                return false;
+            }
+            return true;
+        }
+
+        function validateBirthDate() {
+            const birthDate = document.getElementById("birth_date");
+            const error = document.getElementById("birth_date_error");
+            const today = new Date();
+            const birthDateValue = new Date(birthDate.value);
+            if (birthDateValue >= today) {
+                error.textContent = "Birth date cannot be today or in the future.";
+                return false;
+            }
+            return true;
+        }
+
+        function validateLanguages() {
+            const languages = document.querySelectorAll("input[name='languages']:checked");
+            const error = document.getElementById("languages_error");
+            if (languages.length === 0) {
+                error.textContent = "Please select at least one language.";
+                return false;
+            }
+            return true;
+        }
+
+        function validateProfileImage() {
+            const profile = document.getElementById("profile");
+            const error = document.getElementById("profile_error");
+            if (!profile.files.length) {
+                error.textContent = "Please upload a profile image.";
+                return false;
+            }
+            return true;
+        }
+    </script>
+</body>
+</html>

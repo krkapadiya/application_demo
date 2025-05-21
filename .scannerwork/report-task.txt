@@ -1,0 +1,6 @@
+projectKey=application_demo
+serverUrl=http://localhost:9000
+serverVersion=25.5.0.107428
+dashboardUrl=http://localhost:9000/dashboard?id=application_demo
+ceTaskId=fee8caa2-aa76-4994-aef2-4315e4d57812
+ceTaskUrl=http://localhost:9000/api/ce/task?id=fee8caa2-aa76-4994-aef2-4315e4d57812
