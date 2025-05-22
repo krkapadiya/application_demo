@@ -11,7 +11,6 @@ const employeecontroller = {
     try {
 
       const employees = await employee.find().sort({ createdAt: -1 });
-
       res.render("showemp", { employees });
     } catch (error) {
       console.error("Error fetching employees:", error);
