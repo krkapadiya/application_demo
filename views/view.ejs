@@ -83,10 +83,10 @@
         </div>
         <div class="card-body">
             <% if (employee.profile && employee.profile.trim() !=="" ) { %>
-                <img src="http://localhost:2500/<%= employee.profile %>" width="100" height="100" alt="Profile Image"
+                <img src="/<%= employee.profile %>" width="100" height="100" alt="Profile Image"
                     style="object-fit: cover; border-radius: 50%; border: 1px solid #ccc;" />
                 <% } else { %>
-                    <img src="http://localhost:2500/uploads/defaultimg.png" width="100" height="100"
+                    <img src="/uploads/defaultimg.png" width="100" height="100"
                         alt="Default Profile Image"
                         style="object-fit: cover; border-radius: 50%; border: 1px solid #ccc;" />
                     <% } %>

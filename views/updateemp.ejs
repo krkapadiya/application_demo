@@ -191,7 +191,7 @@ button[type="submit"]:hover {
 
         <label for="profile">Profile Image</label>
         <% if (employee.profile) { %>
-            <img src="http://localhost:2500/<%= employee.profile %>" alt="Profile Image" width="100"><br>
+            <img src="/<%= employee.profile %>" alt="Profile Image" width="100"><br>
             <label>Change Profile Image:</label>
         <% } %>
         <input type="file" name="profile" accept="image/*">
